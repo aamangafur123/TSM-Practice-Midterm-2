@@ -1,0 +1,65 @@
+---
+title: "Practice Midterm 2"
+author: "Aaman Gafur"
+date: "2025-03-06"
+output: html_document
+---
+
+```{r}
+
+library(forecast)
+library(TTR)
+library(fpp2)
+
+us_arr <- arrivals[, "US"]
+plot(us_arr)
+
+#SIMPLE MOVING AVERAGES
+MA3_forecast <- ma(elecequip,order=3)
+MA6_forecast <- ma(elecequip,order=6)
+MA9_forecast <- ma(elecequip,order=9)
+
+lines(MA3_forecast, col = "red")
+lines(MA6_forecast, col = "purple")
+lines(MA9_forecast, col = "green")
+
+#As the moving average order goes up, I notice that the lines smooth out 
+
+forecast_ma <- ts(MA6_forecast)
+plot(forecast(forecast_ma, h = 12))
+
+#SIMPLE SMOOTHING:
+
+ss_model <- ets(us_arr)
+ss_forecast <- forecast(ss_model, h=12)
+plot(ss_forecast)
+#According to the summary below, alpha is 0.5256, which indicates that recent data is valued slightly, the initial state value is 32.7911, and sigma is 7.8292 which indicates that the actual values deviate from the predictions to some extent.
+summary(ss_model)
+
+#In the bwlow residual plot, we can see that the points are clustered around 0 for the most part but for some values there are spikes mmeaning that the predictions may not be as good as it can be.
+plot(residuals(ss_model))
+
+#The histogram for the residuals below indicates that the residuals are normally distributed vbeacuse the histogram is bell shapes roughly. The very slight right skewness might indicate that there are some underestimations.
+hist(residuals(ss_model))
+#The 2 plots below show no patterns.
+plot(fitted(ss_model), residuals(ss_model))
+plot(us_arr, residuals(ss_model))
+#The ACF below shoes that there is no significant correllation because almost all lines are within the confidence intervals
+Acf(residuals(ss_model))
+#below are the measures of accuracy
+accuracy(ss_model)
+
+
+#HOLT-WINTERS
+
+#ACCURACY SUMMARY
+
+#CONCLUSION
+
+
+
+
+
+
+
+```
